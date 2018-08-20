@@ -1,3 +1,3 @@
 # android-4.4.99
 ### Hesap Makinesi
-İlk başta yaptığım hesap makinesi uygulamasını "hesapMakinesi" branch'ında bulabilirsiniz
+Android 4.4 sürümündekki dizayna göre daha modern gözüken bir hesap makinesi. İndirmek isteyenler ilgili branch'a gidip indirebilir
