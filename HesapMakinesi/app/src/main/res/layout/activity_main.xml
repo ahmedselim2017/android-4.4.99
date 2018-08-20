@@ -164,11 +164,11 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:layout_weight="1">
 
                 <Button
                     android:id="@+id/btnSil"
-                    android:layout_width="150dp"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:background="@color/anaRenk"
@@ -184,6 +184,15 @@
                 android:layout_weight="1"
                 android:background="@color/colorAccent"
                 android:text="0"
+                android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/btnNokta"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/colorAccent"
+                android:text="."
                 android:textSize="30sp" />
 
             <ImageButton

@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String suAnkiSayi = "";
 
     //Sonucun Int Hali
-    int sonuc;
+    Double sonuc;
 
     //İşlemlerde kullanılan değerler (solDeger+sagDeger=sonuc gibi)
     String solDeger;
@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageButton btnCarpma = findViewById(R.id.btnCarpma);
         ImageButton btnBolme = findViewById(R.id.btnBolme);
 
+
+        //Nokta Butonu
+        Button btnNokta=findViewById(R.id.btnNokta);
+
         //Silme Butonu
         Button btnSil= findViewById(R.id.btnSil);
 
@@ -89,6 +93,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnCikarma.setOnClickListener(this);
         btnCarpma.setOnClickListener(this);
         btnBolme.setOnClickListener(this);
+
+        //Nokta Butonu
+        btnNokta.setOnClickListener(this);
 
         //Silme Butonu
         btnSil.setOnClickListener(this);
@@ -176,14 +183,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 islemiGerceklestir(Islem.BOLME);
                 break;
 
-            //btnSil ise
+            //brnNokta ise
+            case R.id.btnNokta:
+
+                suAnkiSayi = suAnkiSayi+ ".";
+                lblSonuc.setText(suAnkiSayi);
+                break;
+
+                //btnSil ise
             case R.id.btnSil:
 
                 //herseyi sıfırlama
                 solDeger="";
                 sagDeger="";
                 suAnkiSayi="";
-                sonuc=0;
+                sonuc=0.0;
                 suAnkiIslem=null;
 
                 //Label'ın temilenmesi
@@ -212,22 +226,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         //TOPLAMA ise
                         case TOPLAMA:
-                            sonuc = Integer.parseInt(solDeger) + Integer.parseInt(sagDeger);
+                            sonuc = Double.parseDouble(solDeger) + Double.parseDouble(sagDeger);
                             break;
 
                         //CIKARMA ise
                         case CIKARMA:
-                            sonuc = Integer.parseInt(solDeger) - Integer.parseInt(sagDeger);
+                            sonuc = Double.parseDouble(solDeger) - Double.parseDouble(sagDeger);
                             break;
 
                         //CARPMA ise
                         case CARPMA:
-                            sonuc = Integer.parseInt(solDeger) * Integer.parseInt(sagDeger);
+                            sonuc = Double.parseDouble(solDeger) * Double.parseDouble(sagDeger);
                             break;
 
                         //BOLME  ise
                         case BOLME:
-                            sonuc = Integer.parseInt(solDeger) / Integer.parseInt(sagDeger);
+                            sonuc = Double.parseDouble(solDeger) / Double.parseDouble(sagDeger);
                             break;
                         }
 
