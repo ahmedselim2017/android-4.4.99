@@ -10,4 +10,6 @@ public class anaSayfa extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ana_sayfa);
     }
+
+
 }
