@@ -11,6 +11,8 @@ public class GunlukBilgi {
     String ulke;
     String tarih;
 
+    int bolumBaslangici;
+
     SaatlikBilgi bolum1;
     SaatlikBilgi bolum2;
     SaatlikBilgi bolum3;
@@ -19,12 +21,14 @@ public class GunlukBilgi {
     SaatlikBilgi bolum6;
     SaatlikBilgi bolum7;
     SaatlikBilgi bolum8;
+
     SaatlikBilgi[] liste;
 
-    public GunlukBilgi(String sehir, String ulke, String tarih, SaatlikBilgi bolum1, SaatlikBilgi bolum2, SaatlikBilgi bolum3, SaatlikBilgi bolum4, SaatlikBilgi bolum5, SaatlikBilgi bolum6, SaatlikBilgi bolum7, SaatlikBilgi bolum8) {
+    public GunlukBilgi(String sehir, String ulke, String tarih, SaatlikBilgi bolum1, SaatlikBilgi bolum2, SaatlikBilgi bolum3, SaatlikBilgi bolum4, SaatlikBilgi bolum5, SaatlikBilgi bolum6, SaatlikBilgi bolum7, SaatlikBilgi bolum8,int bolumBaslangici) {
         this.sehir = sehir;
         this.ulke = ulke;
         this.tarih = tarihiformatla(tarih);
+        this.bolumBaslangici=bolumBaslangici;
         this.bolum1 = bolum1;
         this.bolum2 = bolum2;
         this.bolum3 = bolum3;
@@ -41,36 +45,35 @@ public class GunlukBilgi {
 
     private String tarihiformatla(String tarih){
         String sadeceTarih=tarih.split(" ")[0];
-        String yil=sadeceTarih.split("-")[0];
         String ay=sadeceTarih.split("-")[1];
         String gun=sadeceTarih.split("-")[2];
 
         switch (ay){
-            case "1":
+            case "01":
                 return gun+" Ocak";
 
-            case "2":
+            case "02":
                 return gun+" Şubat";
                 
-            case "3":
+            case "03":
                 return gun+" Mart";
                 
-            case "4":
+            case "04":
                 return gun+" Nisan";
                 
-            case "5":
+            case "05":
                 return gun+" Mayıs";
                 
-            case "6":
+            case "06":
                 return gun+" Haziran";
                 
-            case "7":
+            case "07":
                 return gun+" Temmuz";
                 
-            case "8":
-                return gun+" Ağuston";
+            case "08":
+                return gun+" Ağustos";
                 
-            case "9":
+            case "09":
                 return gun+" Eylül";
                 
             case "10":
@@ -89,11 +92,19 @@ public class GunlukBilgi {
 
 class SaatlikBilgi{
 
+    public static final String HAVA_DURUMU_BULUTLU="Clouds";
+    public static final String HAVA_DURUMU_ACIK="Clear";
+    public static final String HAVA_DURUMU_YAGMURLU="Rain";
+    public static final String HAVA_DURUMU_FIRTINALI="Thunderstorm";
+    public static final String HAVA_DURUMU_KARLI="Snow";
+
+
     Double suankiSicaklik;
     Double enDusukSicaklik;
     Double enYuksekSicaklik;
 
     String havaDurumu;
+
 
     public SaatlikBilgi(Double suankiSicaklik, Double enDusukSicaklik, Double enYuksekSicaklik, String havaDurumu) {
         this.suankiSicaklik = suankiSicaklik;
@@ -101,4 +112,6 @@ class SaatlikBilgi{
         this.enYuksekSicaklik = enYuksekSicaklik;
         this.havaDurumu = havaDurumu;
     }
+
+
 }

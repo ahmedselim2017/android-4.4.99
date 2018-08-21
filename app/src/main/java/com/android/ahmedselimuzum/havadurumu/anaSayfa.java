@@ -10,6 +10,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,10 +37,26 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
     private final int PERMISSION_LOCATION=111;
     private ArrayList<GunlukBilgi> raporlar=new ArrayList<>();
 
+    private ImageView imgHava;
+    private ImageView imgHavaKucuk;
+    private TextView lblHavaGunduz;
+    private TextView lblHavaGece;
+    private TextView lblTarih;
+    private TextView lblSehir;
+    private TextView lblHavaDurumu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ana_sayfa);
+
+        imgHava=findViewById(R.id.imgHava);
+        imgHavaKucuk=findViewById(R.id.imgHavaKucuk);
+        lblHavaGunduz=findViewById(R.id.lblHavaGunduz);
+        lblHavaGece=findViewById(R.id.lblHavaGece);
+        lblTarih=findViewById(R.id.lblTarih);
+        lblSehir=findViewById(R.id.lblSehir);
+        lblHavaDurumu=findViewById(R.id.lblHavaDurumu);
 
 
         mGoogleApiClient=new GoogleApiClient.Builder(this)
@@ -47,7 +65,6 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-
 
 
     }
@@ -69,19 +86,22 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
             public void onResponse(JSONObject response) {
 
                 try{
+
                     GunlukBilgi rapor;
                     JSONObject sehir=response.getJSONObject("city");
 
                     String sehirIsim=sehir.getString("name");
                     String ulke=sehir.getString("country");
-                    String tarih=response.getString("dt_txt");
+                    String tarih;
 
                     JSONArray liste=response.getJSONArray("list");
 
 
                     JSONObject o;
                     JSONObject main;
+                    JSONArray hava1;
                     JSONObject hava;
+
 
                     String saat;
                     String havaDurumu;
@@ -89,6 +109,8 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
                     Double suankiSicaklik;
                     Double enDusukSicaklik;
                     Double enYuksekSicaklik;
+
+                    int bolumBaslangici=0;
 
                     SaatlikBilgi bolum1=null;
                     SaatlikBilgi bolum2=null;
@@ -106,42 +128,76 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
                         }
 
                         o=liste.getJSONObject(i);
+                        tarih=o.getString("dt_txt");
                         main=o.getJSONObject("main");
-                        hava=o.getJSONObject("weather");
+                        hava1=o.getJSONArray("weather");
+                        hava=hava1.getJSONObject(0);
 
                         saat=tarih.split(" ")[1];
                         havaDurumu=hava.getString("main");
 
-                        suankiSicaklik=o.getDouble("temp");
-                        enDusukSicaklik=o.getDouble("temp_min");
-                        enYuksekSicaklik=o.getDouble("temp_max");
+                        suankiSicaklik=main.getDouble("temp");
+                        enDusukSicaklik=main.getDouble("temp_min");
+                        enYuksekSicaklik=main.getDouble("temp_max");
 
 
                         switch (saat){
                             case "00:00:00":
                                 bolum1=new SaatlikBilgi(suankiSicaklik,enDusukSicaklik,enYuksekSicaklik,havaDurumu);
+
+                                if(bolumBaslangici==0) {
+                                    bolumBaslangici = 1;
+                                }
                                 break;
                             case "03:00:00":
                                 bolum2=new SaatlikBilgi(suankiSicaklik,enDusukSicaklik,enYuksekSicaklik,havaDurumu);
+
+                                if(bolumBaslangici==0) {
+                                    bolumBaslangici = 2;
+                                }
                                 break;
                             case "06:00:00":
                                 bolum3=new SaatlikBilgi(suankiSicaklik,enDusukSicaklik,enYuksekSicaklik,havaDurumu);
+
+                                if(bolumBaslangici==0) {
+                                    bolumBaslangici = 3;
+                                }
                                 break;
                             case "09:00:00":
                                 bolum4=new SaatlikBilgi(suankiSicaklik,enDusukSicaklik,enYuksekSicaklik,havaDurumu);
+
+                                if(bolumBaslangici==0) {
+                                    bolumBaslangici = 4;
+                                }
                                 break;
                             case "12:00:00":
                                 bolum5=new SaatlikBilgi(suankiSicaklik,enDusukSicaklik,enYuksekSicaklik,havaDurumu);
+
+                                if(bolumBaslangici==0) {
+                                    bolumBaslangici = 5;
+                                }
                                 break;
                             case "15:00:00":
                                 bolum6=new SaatlikBilgi(suankiSicaklik,enDusukSicaklik,enYuksekSicaklik,havaDurumu);
+
+                                if(bolumBaslangici==0) {
+                                    bolumBaslangici = 6;
+                                }
                                 break;
                             case "18:00:00":
                                 bolum7=new SaatlikBilgi(suankiSicaklik,enDusukSicaklik,enYuksekSicaklik,havaDurumu);
+
+                                if(bolumBaslangici==0) {
+                                    bolumBaslangici = 7;
+                                }
                                 break;
                             case "21:00:00":
                                 bolum8=new SaatlikBilgi(suankiSicaklik,enDusukSicaklik,enYuksekSicaklik,havaDurumu);
-                                rapor=new GunlukBilgi(sehirIsim,ulke,tarih,bolum1,bolum2,bolum3,bolum4,bolum5,bolum6,bolum7,bolum8);
+
+                                if(bolumBaslangici==0) {
+                                    bolumBaslangici = 8;
+                                }
+                                rapor=new GunlukBilgi(sehirIsim,ulke,tarih,bolum1,bolum2,bolum3,bolum4,bolum5,bolum6,bolum7,bolum8,bolumBaslangici);
                                 raporlar.add(rapor);
                                 break;
                         }
@@ -149,7 +205,11 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
                     }
 
                 }
-                catch (JSONException h){}
+                catch (JSONException h){
+                    Log.i("NEDEN",h.getLocalizedMessage());
+
+                }
+                gorunumleriAyarla();
 
             }
         }, new Response.ErrorListener() {
@@ -173,6 +233,52 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
         }
     }
 
+    private void gorunumleriAyarla(){
+        if(raporlar.size()>0){
+
+            GunlukBilgi rapor=raporlar.get(0);
+
+            SaatlikBilgi bolum=rapor.liste[rapor.bolumBaslangici-1];
+
+            switch (bolum.havaDurumu){
+                case SaatlikBilgi.HAVA_DURUMU_BULUTLU:
+                    imgHava.setImageResource(R.drawable.cloudy);
+                    imgHavaKucuk.setImageResource(R.drawable.cloudy);
+                    lblHavaDurumu.setText("Bulutlu");
+                    break;
+                case SaatlikBilgi.HAVA_DURUMU_KARLI:
+                    imgHava.setImageResource(R.drawable.snow);
+                    imgHavaKucuk.setImageResource(R.drawable.snow);
+                    lblHavaDurumu.setText("Karlı");
+                    break;
+                case SaatlikBilgi.HAVA_DURUMU_FIRTINALI:
+                    imgHava.setImageResource(R.drawable.thunder_lightning);
+                    imgHavaKucuk.setImageResource(R.drawable.thunder_lightning);
+                    lblHavaDurumu.setText("Fırtınalı");
+                    break;
+                case SaatlikBilgi.HAVA_DURUMU_YAGMURLU:
+                    imgHava.setImageResource(R.drawable.rainy);
+                    imgHavaKucuk.setImageResource(R.drawable.rainy);
+                    lblHavaDurumu.setText("Yağmurlu");
+                    break;
+
+                default:
+                    Log.v("HAVAYA BAK",bolum.havaDurumu);
+                    imgHava.setImageResource(R.drawable.sunny);
+                    imgHavaKucuk.setImageResource(R.drawable.sunny);
+                    lblHavaDurumu.setText("Açık");
+                    break;
+            }
+
+
+            lblTarih.setText(rapor.tarih);
+            lblHavaGunduz.setText(Math.round(bolum.suankiSicaklik)+"°");
+            lblHavaGece.setText(Math.round(rapor.bolum8.suankiSicaklik)+"°");
+            lblSehir.setText(rapor.sehir+" "+rapor.ulke);
+
+        }
+    }
+
 
     @Override
     public void onLocationChanged(Location location) {
@@ -181,7 +287,6 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},PERMISSION_LOCATION);
         }
