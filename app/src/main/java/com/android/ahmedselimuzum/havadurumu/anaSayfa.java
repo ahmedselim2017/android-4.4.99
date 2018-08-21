@@ -3,13 +3,19 @@ package com.android.ahmedselimuzum.havadurumu;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +51,8 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
     private TextView lblSehir;
     private TextView lblHavaDurumu;
 
+    RaporAdaptesi adaptor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +65,13 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
         lblTarih=findViewById(R.id.lblTarih);
         lblSehir=findViewById(R.id.lblSehir);
         lblHavaDurumu=findViewById(R.id.lblHavaDurumu);
+
+        RecyclerView recyclerView=findViewById(R.id.tabloGoruntuleyici);
+        adaptor=new RaporAdaptesi(raporlar);
+        recyclerView.setAdapter(adaptor);
+
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
 
         mGoogleApiClient=new GoogleApiClient.Builder(this)
@@ -210,6 +225,7 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
 
                 }
                 gorunumleriAyarla();
+                adaptor.notifyDataSetChanged();
 
             }
         }, new Response.ErrorListener() {
@@ -240,35 +256,7 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
 
             SaatlikBilgi bolum=rapor.liste[rapor.bolumBaslangici-1];
 
-            switch (bolum.havaDurumu){
-                case SaatlikBilgi.HAVA_DURUMU_BULUTLU:
-                    imgHava.setImageResource(R.drawable.cloudy);
-                    imgHavaKucuk.setImageResource(R.drawable.cloudy);
-                    lblHavaDurumu.setText("Bulutlu");
-                    break;
-                case SaatlikBilgi.HAVA_DURUMU_KARLI:
-                    imgHava.setImageResource(R.drawable.snow);
-                    imgHavaKucuk.setImageResource(R.drawable.snow);
-                    lblHavaDurumu.setText("Karlı");
-                    break;
-                case SaatlikBilgi.HAVA_DURUMU_FIRTINALI:
-                    imgHava.setImageResource(R.drawable.thunder_lightning);
-                    imgHavaKucuk.setImageResource(R.drawable.thunder_lightning);
-                    lblHavaDurumu.setText("Fırtınalı");
-                    break;
-                case SaatlikBilgi.HAVA_DURUMU_YAGMURLU:
-                    imgHava.setImageResource(R.drawable.rainy);
-                    imgHavaKucuk.setImageResource(R.drawable.rainy);
-                    lblHavaDurumu.setText("Yağmurlu");
-                    break;
-
-                default:
-                    Log.v("HAVAYA BAK",bolum.havaDurumu);
-                    imgHava.setImageResource(R.drawable.sunny);
-                    imgHavaKucuk.setImageResource(R.drawable.sunny);
-                    lblHavaDurumu.setText("Açık");
-                    break;
-            }
+            havaDurumuAyarla(imgHava,imgHavaKucuk,lblHavaDurumu,bolum);
 
 
             lblTarih.setText(rapor.tarih);
@@ -279,6 +267,39 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
         }
     }
 
+
+    private void havaDurumuAyarla(ImageView imgHava,ImageView imgHavaKucuk,TextView lblHavaDurumu,SaatlikBilgi bolum){
+
+        switch (bolum.havaDurumu){
+            case SaatlikBilgi.HAVA_DURUMU_BULUTLU:
+                imgHava.setImageResource(R.drawable.cloudy);
+                lblHavaDurumu.setText("Bulutlu");
+                break;
+            case SaatlikBilgi.HAVA_DURUMU_KARLI:
+                imgHava.setImageResource(R.drawable.snow);
+                lblHavaDurumu.setText("Karlı");
+                break;
+            case SaatlikBilgi.HAVA_DURUMU_FIRTINALI:
+                imgHava.setImageResource(R.drawable.thunder_lightning);
+                lblHavaDurumu.setText("Fırtınalı");
+                break;
+            case SaatlikBilgi.HAVA_DURUMU_YAGMURLU:
+                imgHava.setImageResource(R.drawable.rainy);
+                lblHavaDurumu.setText("Yağmurlu");
+                break;
+
+            default:
+                Log.v("HAVAYA BAK",bolum.havaDurumu);
+                imgHava.setImageResource(R.drawable.sunny);
+                lblHavaDurumu.setText("Açık");
+                break;
+        }
+
+        if (imgHavaKucuk!=null){
+            havaDurumuAyarla(imgHavaKucuk,null,lblHavaDurumu,bolum);
+        }
+
+    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -305,4 +326,67 @@ public class anaSayfa extends AppCompatActivity implements GoogleApiClient.OnCon
     public void onConnectionSuspended(int i) {
 
     }
+
+
+    public class RaporAdaptesi extends RecyclerView.Adapter<RaporViewTutucu>{
+        private ArrayList<GunlukBilgi> gunlukRaporListe;
+
+        public RaporAdaptesi(ArrayList<GunlukBilgi> gunlukRaporListe) {
+            this.gunlukRaporListe = gunlukRaporListe;
+        }
+
+        @Override
+        public void onBindViewHolder(RaporViewTutucu holder, int position) {
+            GunlukBilgi rapor=gunlukRaporListe.get(position);
+            holder.gorunumleriAyarla(rapor);
+        }
+
+        @Override
+        public int getItemCount() {
+            return gunlukRaporListe.size();
+        }
+
+        @Override
+        public RaporViewTutucu onCreateViewHolder(ViewGroup parent, int viewType) {
+            View kart= LayoutInflater.from(parent.getContext()).inflate(R.layout.card_hava,parent,false);
+            return new RaporViewTutucu(kart);
+        }
+    }
+
+    public class RaporViewTutucu extends RecyclerView.ViewHolder{
+
+        private ImageView imgHavaResim;
+        private TextView lblGun;
+        private TextView lblDurum;
+        private TextView lblHavaSabahDerece;
+        private TextView lblHavaGeceDerece;
+
+
+        public RaporViewTutucu(View itemView){
+            super(itemView);
+
+            imgHavaResim=itemView.findViewById(R.id.imgHavaResim);
+            lblGun=itemView.findViewById(R.id.lblGun);
+            lblDurum=itemView.findViewById(R.id.lblDurum);
+            lblHavaSabahDerece=itemView.findViewById(R.id.lblHavaSabahDerece);
+            lblHavaGeceDerece=itemView.findViewById(R.id.lblHavaGeceDerece);
+        }
+
+        private void gorunumleriAyarla(GunlukBilgi rapor){
+
+
+            SaatlikBilgi bolum=rapor.liste[4];
+            SaatlikBilgi bolumGece=rapor.liste[7];
+
+            lblGun.setText(rapor.tarih);
+            lblHavaSabahDerece.setText(Math.round(bolum.suankiSicaklik)+"°");
+            lblHavaGeceDerece.setText(Math.round(bolumGece.suankiSicaklik)+"°");
+
+            havaDurumuAyarla(imgHavaResim,null,lblDurum,bolum);
+        }
+
+    }
 }
+
+
+
